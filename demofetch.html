@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table{
+            width: 80%;
+            background-color: rgb(234, 241, 243);
+            border: 2px solid black;
+            margin: auto;
+            padding: 2px;
+            border-collapse: collapse;
+        }
+        th,td{
+            border: 1px solid black;
+            text-align: center;
+        }
+    </style>
+    <script>
+         let rate=0;
+        async function getExchangeRate(){
+            
+            try{
+                const response= await fetch("https://open.er-api.com/v6/latest/USD");
+                console.log("response=",response);
+                rate= await response.json();
+                console.log("rate=",rate);
+                rate=rate.rates.INR;
+                return rate;
+            }
+            catch(err){
+                console.log("Error: ",err);
+            }
+        }
+        async function loadProducts(){
+            const URL="https://dummyjson.com/products";
+            try{
+               const res= await fetch(URL);
+               const ele1=document.getElementById("data1");
+               console.log("res=",res);
+               const data=await res.json();
+               console.log("data=",data.products);
+               let rows="";
+               data.products.map((i,index)=>(
+                rows=rows+`
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${i.title}</td>
+                    <td><img src="${i.images[0]}" width="100px" height="100px"/></td>
+                    <td>${i.category}</td>
+                    <td>${i.rating}</td>
+                    <td>₹ ${(i.price*rate).toFixed(2)}</td>
+                    <td>${i.stock}</td>
+                    <td><button>Add to Cart</button></td>
+                </tr>`
+               ))
+               ele1.innerHTML=rows;
+            }
+            catch(err){
+                console.log("Error: ",err);
+            }
+        }
+        const test=async()=>{
+            rate=await getExchangeRate();
+            console.log("rate=",rate);
+        }
+        loadProducts();
+        test();
+        // getExchangeRate().then((r) => {
+        //     rate = r;
+        // });
+    </script>
+</head>
+<body>
+    <h1><center>List of Products</center></h1>
+    <table border="1px" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Sr.No</th>
+                <th>Title</th>
+                <th>Image</th>
+                <th>Category</th>
+                <th>Rating</th>
+                <th>Price(₹)</th>
+                <th>Stock</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="data1">
+
+        </tbody>
+    </table>
+    
+</body>
+</html>
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Fetch in js</title>
+    <script>
+        async function loadProduct(){
+            const url = "https://dummyjson.com/products";
+            try{
+                const res=await fetch(url);
+                console.log("Response:", res);
+                const data=await res.json();
+                console.log("Data", data.products);
+                let rows="";
+                 const el=document.getElementById("Data");
+                data.products.map((i,index)=>{
+                    
+                        el.innerHTML+=
+                        ` <tr>
+                        <td>${index+1}</td>
+                        <td>${i.title}</td>
+                        <td><img src="${i.thumbnail}" width="100px" height="100px"/></td>
+                        <td>${i.category}</td>
+                        <td>${i.rating}</td>
+                        <td>${(i.price*rate).toFixed(2)}</td>
+                        <td>${i.stock}</td>
+                        <td><button>Add to Cart</button></td>
+                        </tr>`;
+                }); 
+
+            }
+            catch(err){
+                console.log("Error:", err);
+            }
+        }
+        async function getrate() {
+            const url = "https://open.er-api.com/v6/latest/USD";
+            try {
+                const res = await fetch(url);
+                const rate = await res.json();
+                console.log("INR Rate:", rate.rates.INR);
+                return rate.rates.INR;
+
+            } 
+            catch (err) {
+                console.log("Error fetching currency data:", err);
+            }
+        }
+        const rate = await getrate();   
+        loadProduct();
+    </script>
+    <style>
+        table{
+            width: 80vw;
+            margin: auto;
+            padding: 20px;
+            background-color: aqua;
+            border: 2px solid blue;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <th>Sr. No.</th>
+            <th>Title</th>
+            <th>Image</th>
+            <th>Category</th>
+            <th>Rating</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Action</th>
+        </thead>
+        <tbody id="Data">
+            
+        </tbody>
+    </table>
+</body>
+</html>
+<!-- <table>
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody id="data">
+
+        </tbody>
+    </table> -->
+<!--<script>
+        const url = "https://dummyjson.com/products";
+        async function loadProduct(){
+            try{
+                
+                const res=await fetch(url);
+                const ele1=document.getElementById("data");
+                const data=await res.json();
+                //console.log("Response:", res);
+                console.log("Data", data.products);
+                data.products.map((i)=>{
+                    ele1.innerHTML+=`<tr>
+                        <td>${i.id}</td>
+                        <td>${i.title}</td>
+                        <td>${i.category}</td>
+                        <td>${i.price}</td>
+                        <td>${i.rating}</td>
+                    </tr>`
+            })
+            }
+            catch(err){
+                console.log("Error:", err);
+            }
+        }
+        loadProduct();
+       
+    </script>
+    <style>
+        table{
+            margin: auto;
+            padding: 20px;
+            background-color: aqua;
+            color: red;
+            border: 2px solid blue;
+        }
+    </style> --> -->
